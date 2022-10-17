@@ -1,0 +1,159 @@
+.body {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background: #EFE4CF;
+}
+
+.header {
+    color: #6F6E31;
+    padding: 10px 50px;
+    background-color: #CDB184;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    border: 1px solid #28340B;
+    border-radius: 5px;
+    background-color: inherit;
+    color: inherit;
+    font-weight: 600;
+    transition: background-color 0.6s ease;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #EFE4CF;
+}
+
+.header h1 {
+    text-align: center;
+    margin: 0;
+}
+
+.main {
+    padding: 10px;
+}
+
+.form {
+    width: fit-content;
+    margin: 100px auto 0 auto;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 40px;
+    border-radius: 10px;
+    background: #CDB184;
+    color: #EFE4CF;
+    font-size: 22px;
+}
+
+.form h1 {
+    font-size: 40px;
+}
+
+.form input {
+    font-size: 20px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20px;
+    color: #EFE4CF;
+    outline: none;
+    border: 1px solid #A18748;
+    border-radius: 10px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background-color: inherit;
+    transition: all 0.5s ease-in;
+}
+
+.form__submit {
+    cursor: pointer;
+}
+
+.form input::placeholder {
+    color: rgba(239, 228, 207, 0.5);;
+}
+
+.form input:focus {
+    border-color: #28340B;
+}
+
+.form__submit:hover {
+    background-color: #6F6E31;
+}
+
+.form-filename {
+    margin: 0;
+}
+
+
+.section__file {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: fit-content;
+}
+
+.textarea {
+    background-color: inherit;
+    border-radius: 5px;
+    border: 1px solid #A18748;
+    
+}
+
+.sections__file-buttons {
+    box-sizing: border-box;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sections__file-buttons button {
+    padding: 10px;
+    border: none;
+}
+
+.button-delete {
+    background-color: orangered;
+    color: #EFE4CF;
+}
+
+.button-save {
+    background-color: #6F6E31;
+    color: #A18748;
+}
+
+.button-save:hover {
+    background-color: #28340B;
+}
+
+.button-delete:hover {
+    background-color: red;
+}
+
+.section-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+.display-none {
+    display: none;
+}
+
+.form__link {
+    margin-top: 10px;
+    font-size: 16px;
+    margin-left: auto;
+    cursor: pointer;
+    transition: color 0.6s ease;
+}
+
+.form__link:hover {
+    color: #28340B;
+}
