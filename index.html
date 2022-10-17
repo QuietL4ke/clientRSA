@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body class="body">
+    <header class="header display-none">
+        <h1 class="header__h1">Добро пожаловать <span id="username"></span></h1>
+        <button class="button button__logout" id="button-logout">Выйти из аккаунта</button>
+    </header>
+    <main class="main">
+        <form class="form form-login" id="form-login">
+            <h1>Войдите в аккаунт</h1>
+            <input type="email" placeholder="Email" class="form__email" name="email" id="email-login" required>
+            <input type="password" placeholder="Password" class="form__password" name="password" id="password-login" required>
+            <input type="submit" class="form__submit" id="submit-login">
+            <a class="form__link" id="create-account-link">Создайте аккаунт...</a>
+        </form>
+        <form class="form form-register display-none" id="form-register">
+            <h1>Зарегистрируйтесь</h1>
+            <input type="text" name="username" id="username-register" placeholder="Username" required>
+            <input type="email" placeholder="Email" class="form__email" name="email" id="email-register" required>
+            <input type="password" placeholder="Password" class="form__password" name="password" id="password-register" required>
+            <input type="submit" class="form__submit" id="submit-register" value="Создать пользователя">
+            <a class="form__link" id="register-account-link">Войти в аккаунт...</a>
+        </form>
+        <section class="section-content display-none">
+            <form class="form form-filename" id="form-filename">
+                <label for="filename">Введите имя файла</label>
+                <input type="text" name="filename" id="filename-input" placeholder="имя файла" required>
+                <input type="submit" class="form__submit" id="submit-filename" value="Редактировать">
+            </form>
+            <div class="section__file display-none" id="section-file">
+                <textarea name="file" id="textarea" cols="50" rows="20" class="textarea"></textarea>
+                <div class="sections__file-buttons">
+                    <button class="button button-delete">Удалить</button>
+                    <button class="button button-save">Сохранить</button>
+                </div>
+                <p>Вы редактируете файл <span id="span-filename"></span></p>
+            </div>
+        </section>
+    </main>
+</body>
+
+<script src="./bundle.js"></script>
+
+</html>
