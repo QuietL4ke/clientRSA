@@ -26635,39 +26635,43 @@ const rand = require('csprng');
 
 
 (async () => {
-    const URL = 'https://9093-178-122-215-60.eu.ngrok.io/';
+    const URL = 'https://0e3c-46-56-243-194.eu.ngrok.io/';
 
 
     const keys = ecdh.generateKeyPair(Uint8Array.from(Buffer.from(rand(256, 16), 'hex')))
-    
+
     const privateKey = keys.private;
     const publicKeyString = Buffer.from(keys.public).toString('hex');
     var sharedSecret;
-    var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+    var key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
-    const XHR = new XMLHttpRequest();
-    XHR.addEventListener('load', function (response) {
-        if (response.target.status == 200) {
-            const body = JSON.parse(response.target.response);
-            const publicKeyServer = body.publicKey;
-            sharedSecret = ecdh.sharedKey(privateKey, Uint8Array.from(Buffer.from(publicKeyServer, 'hex')));
-            key = sharedSecret;
-            localStorage.JWT = body.jwt;
-            console.log(key)
-        } else {
-            console.log(response.target.status)
-        }
-    });
-    XHR.addEventListener('error', function(response) {
-        console.log('??????????????????????????');
-    });
-    XHR.open('POST', URL, true);
-    XHR.send(publicKeyString);
+    function sendSlash () {
+        const XHRSlash = new XMLHttpRequest();
+        XHRSlash.addEventListener('load', function (response) {
+            if (response.target.status == 200) {
+                const body = JSON.parse(response.target.response);
+                const publicKeyServer = body.publicKey;
+                sharedSecret = ecdh.sharedKey(privateKey, Uint8Array.from(Buffer.from(publicKeyServer, 'hex')));
+                key = sharedSecret;
+                localStorage.JWTEncryption = body.jwt;
+                console.log(key)
+            } else {
+                console.log(response.target.status)
+            }
+        });
+        XHRSlash.addEventListener('error', function (response) {
+            console.log('??????????????????????????');
+        });
+        XHRSlash.open('POST', URL, true);
+        XHRSlash.send(publicKeyString);    
+    }
+
+    sendSlash();
 
     function getRandomIV() {
-        return Int16Array.from(Buffer.from(rand(128,16),'hex'));
+        return Int16Array.from(Buffer.from(rand(128, 16), 'hex'));
     }
-    
+
     function fixStrAes(str) {
         const tmpSimbols = str.length % 16;
         if (tmpSimbols !== 0) {
@@ -26684,7 +26688,7 @@ const rand = require('csprng');
         }
     }
 
-    function removeSpaces(str) { 
+    function removeSpaces(str) {
         return str.substring(0, str.split('').findLastIndex(e => e !== ' ') + 1);
     }
 
@@ -26707,14 +26711,14 @@ const rand = require('csprng');
 
     async function decryptMessage(data, isAes) {
         if (isAes) {
-            const iv = Array.from(Buffer.from(data.substring(0,33), 'hex'));
-            const str = data.substring(32,data.length);
+            const iv = Array.from(Buffer.from(data.substring(0, 33), 'hex'));
+            const str = data.substring(32, data.length);
             const encryptedBytes = aesjs.utils.hex.toBytes(str);
             const aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
             const decryptedBytes = aesCbc.decrypt(encryptedBytes);
             const decStr = aesjs.utils.utf8.fromBytes(decryptedBytes);
             const length = removeSpaces(decStr.substring(0, 16));
-            return decStr.substring(16,16 + length);
+            return decStr.substring(16, 16 + parseInt(length));
         } else {
             const int8 = mapArray(str, false);
             let decMessage = await rsa.decrypt(int8, privateKey, 'SHA-256');
@@ -26724,7 +26728,7 @@ const rand = require('csprng');
 
     // console.log(JSON.stringify({aboba: 'hui'}));
     // console.log(await decryptMessage(await encryptMessage({aboba: 'huasdasdsasdai'}, true), true));
- 
+
     const header = document.getElementsByClassName('header')[0];
     const content = document.getElementsByClassName('section-content')[0];
 
@@ -26735,14 +26739,14 @@ const rand = require('csprng');
         openContent();
     }
 
-    async function sendData(data, endpoint, type, onLoad, onError, isJwt) {
+    async function sendData(data, endpoint, type, onLoad, onError, jwt) {
         console.log('Sending data');
         const XHR = new XMLHttpRequest();
         XHR.addEventListener('load', onLoad);
         XHR.addEventListener('error', onError);
         XHR.open(type, URL + endpoint, true);
-        if (isJwt && localStorage.JWT) {
-            XHR.setRequestHeader('Authorization', 'Bearer ' + localStorage.JWT);
+        if (jwt) {
+            XHR.setRequestHeader('Authorization', 'Bearer ' + jwt);
         }
         if (type == "GET") {
             XHR.send();
@@ -26793,12 +26797,12 @@ const rand = require('csprng');
         async function loginOnload(response) {
             if (response.currentTarget.status == 200) {
                 openContent();
-                const body = JSON.parse(await decryptMessage(response.currentTarget.response));
+                const body = JSON.parse(await decryptMessage(response.currentTarget.response, true));
                 document.getElementById('username').textContent = body.username;
                 localStorage.JWT = body.token;
             } else loginOnError(response.currentTarget.status)
         }
-        await sendData({ email: emailInput.value, password: passInput.value }, 'auth/login', 'POST', loginOnload, loginOnError, true);
+        await sendData({ email: emailInput.value, password: passInput.value }, 'auth/login', 'POST', loginOnload, loginOnError, localStorage.JWTEncryption);
         e.preventDefault();
     }
 
@@ -26821,7 +26825,7 @@ const rand = require('csprng');
             }
             else registerOnError(response.currentTarget.status);
         }
-        await sendData({ email: emailInput.value, password: passInput.value, username: username.value, }, 'auth/register', 'POST', registerOnload, registerOnError, true);
+        await sendData({ email: emailInput.value, password: passInput.value, username: username.value }, 'auth/register', 'POST', registerOnload, registerOnError, localStorage.JWTEncryption);
         e.preventDefault();
     }
 
@@ -26850,7 +26854,7 @@ const rand = require('csprng');
             disableButtons(false);
         }
 
-        await sendData({ filename: filename }, 'files', 'DELETE', deleteFileOnLoad, deleteFileOnError, true);
+        await sendData({ filename: filename }, 'files', 'DELETE', deleteFileOnLoad, deleteFileOnError, localStorage.JWT);
     }
 
     async function buttonFindHandler(e) {
@@ -26861,7 +26865,7 @@ const rand = require('csprng');
                 return;
             }
             if (response.currentTarget.status == 200) {
-                const body = JSON.parse(await decryptMessage(response.currentTarget.response));
+                const body = JSON.parse(await decryptMessage(response.currentTarget.response, true));
                 document.getElementById('section-file').classList.remove('display-none');
                 document.getElementById('textarea').value = body.text;
                 document.getElementById('span-filename').textContent = body.filename;
@@ -26877,7 +26881,7 @@ const rand = require('csprng');
 
         const filenameFind = document.getElementById('filename-input').value;
 
-        await sendData({ filename: filenameFind }, 'files', 'POST', findFileOnLoad, findFileOnError, true);
+        await sendData({ filename: filenameFind }, 'files', 'POST', findFileOnLoad, findFileOnError, localStorage.JWT);
     }
 
     async function buttonSaveHandler(e) {
@@ -26899,7 +26903,7 @@ const rand = require('csprng');
         }
 
         const text = document.getElementById('textarea').value;
-        await sendData({ text: text, filename: filename }, 'files', 'PATCH', saveFileOnLoad, saveFileOnError, true);
+        await sendData({ text: text, filename: filename }, 'files', 'PATCH', saveFileOnLoad, saveFileOnError, localStorage.JWT);
     }
 
     function goToRegister() {
@@ -26916,6 +26920,7 @@ const rand = require('csprng');
         localStorage.JWT = undefined;
         closeContent();
         openLogin();
+        sendSlash();
     }
 
     function setUpListeners() {
